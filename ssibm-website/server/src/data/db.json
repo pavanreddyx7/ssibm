@@ -1,0 +1,274 @@
+{
+  "admissions": [],
+  "chatbotConversations": [
+    {
+      "id": "274ec5af-3a49-476e-8dc8-4290dac7884e",
+      "sessionId": "2961bf52-f42b-48ec-87a3-135ef6322448",
+      "language": "en",
+      "messages": [
+        {
+          "role": "assistant",
+          "content": "Hello, I am SSIBM AI. I can help with admissions, courses, and campus information."
+        },
+        {
+          "role": "user",
+          "content": "What courses do you offer?"
+        },
+        {
+          "role": "assistant",
+          "content": "SSIBM offers the following courses: BBA, B.Com, BCA, M.Com, and MSW."
+        }
+      ],
+      "createdAt": "2026-05-10T17:07:27.143Z",
+      "updatedAt": "2026-05-10T17:07:27.143Z"
+    },
+    {
+      "id": "27a4dd86-3cba-42e0-9871-2a6df8667765",
+      "sessionId": "ab8cbb26-d4db-4434-9796-1467a90b4ce2",
+      "language": "en",
+      "messages": [
+        {
+          "role": "assistant",
+          "content": "Hello, I am SSIBM AI. I can help with admissions, courses, and campus information."
+        },
+        {
+          "role": "user",
+          "content": "Where is the campus located?"
+        },
+        {
+          "role": "user",
+          "content": "What are the fees for BCA?"
+        },
+        {
+          "role": "user",
+          "content": "Where is the campus located?"
+        },
+        {
+          "role": "assistant",
+          "content": "The SSIBM campus is located at SSIT Campus, Maralur, Tumakuru, Karnataka 572105.\n\nI am not certain about the exact fees for BCA. Please contact our admissions team at +91 9742689866 or principal.ssibm2006@gmail.com for detailed fee information."
+        }
+      ],
+      "createdAt": "2026-05-10T17:07:23.792Z",
+      "updatedAt": "2026-05-10T17:07:23.792Z"
+    },
+    {
+      "id": "30542d98-897e-4078-a0d6-da6086d3e660",
+      "sessionId": "37393414-8c79-49f4-8b5e-0b2b6ad2ae3c",
+      "language": "en",
+      "messages": [
+        {
+          "role": "assistant",
+          "content": "Hello, I am SSIBM AI. I can help with admissions, courses, and campus information."
+        },
+        {
+          "role": "user",
+          "content": "What are the fees for BCA?"
+        },
+        {
+          "role": "assistant",
+          "content": "I am not certain about the exact fees for the BCA course. Please contact our admissions team directly for detailed fee information. You can reach them at +91 9742689866 or principal.ssibm2006@gmail.com."
+        }
+      ],
+      "createdAt": "2026-05-10T07:24:49.294Z",
+      "updatedAt": "2026-05-10T07:24:49.294Z"
+    },
+    {
+      "id": "e9aac4ef-d565-4555-b6ac-1c861fb0fcc8",
+      "sessionId": "c24add49-5c9e-4e1f-b11b-13abf8b52454",
+      "language": "en",
+      "messages": [
+        {
+          "role": "assistant",
+          "content": "Hello, I am SSIBM AI. I can help with admissions, courses, and campus information."
+        },
+        {
+          "role": "user",
+          "content": "hi"
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! How can I assist you today regarding SSIBM?"
+        }
+      ],
+      "createdAt": "2026-05-10T07:16:31.211Z",
+      "updatedAt": "2026-05-10T07:16:31.211Z"
+    },
+    {
+      "id": "c342179f-6458-4c42-85b5-cc4df38655c7",
+      "sessionId": "6625f71a-bcd6-4368-b90f-59a81080138f",
+      "language": "en",
+      "messages": [
+        {
+          "role": "assistant",
+          "content": "Hello, I am SSIBM AI. I can help with admissions, courses, and campus information."
+        },
+        {
+          "role": "user",
+          "content": "What courses do you offer?"
+        },
+        {
+          "role": "assistant",
+          "content": "SSIBM offers the following courses: BBA, B.Com, BCA, M.Com, and MSW."
+        }
+      ],
+      "createdAt": "2026-05-10T07:16:19.035Z",
+      "updatedAt": "2026-05-10T07:16:19.035Z"
+    },
+    {
+      "id": "deceae89-e727-40eb-a918-22e5513ebcba",
+      "sessionId": "37eadd8e-94e1-4494-83cd-f53ca1db6060",
+      "language": "en",
+      "messages": [
+        {
+          "role": "assistant",
+          "content": "Hello, I am SSIBM AI. I can help with admissions, courses, and campus information."
+        },
+        {
+          "role": "user",
+          "content": "What courses do you offer?"
+        },
+        {
+          "role": "assistant",
+          "content": "SSIBM offers the following courses: BBA, B.Com, BCA, M.Com, and MSW."
+        }
+      ],
+      "createdAt": "2026-05-10T07:16:12.795Z",
+      "updatedAt": "2026-05-10T07:16:12.795Z"
+    },
+    {
+      "id": "545f64b8-62f4-4d2a-9184-7ad619f9a9aa",
+      "sessionId": "cc7c8807-ef19-4c08-97c2-09f7ccc4f0c0",
+      "language": "en",
+      "messages": [
+        {
+          "role": "assistant",
+          "content": "Hello, I am SSIBM AI. I can help with admissions, courses, and campus information."
+        },
+        {
+          "role": "user",
+          "content": "What courses do you offer?"
+        },
+        {
+          "role": "assistant",
+          "content": "SSIBM offers the following courses: BBA, B.Com, BCA, M.Com, and MSW."
+        }
+      ],
+      "createdAt": "2026-05-10T07:16:02.333Z",
+      "updatedAt": "2026-05-10T07:16:02.333Z"
+    }
+  ],
+  "attendanceRecords": [
+    {
+      "id": "att-1",
+      "studentUserId": "student-1",
+      "courseCode": "BCA402",
+      "date": "2026-05-05",
+      "status": "present",
+      "markedByUserId": "faculty-1"
+    },
+    {
+      "id": "att-2",
+      "studentUserId": "student-2",
+      "courseCode": "BCA402",
+      "date": "2026-05-05",
+      "status": "present",
+      "markedByUserId": "faculty-1"
+    },
+    {
+      "id": "att-3",
+      "studentUserId": "student-3",
+      "courseCode": "BCA402",
+      "date": "2026-05-05",
+      "status": "absent",
+      "markedByUserId": "faculty-1"
+    },
+    {
+      "id": "att-4",
+      "studentUserId": "student-1",
+      "courseCode": "BCA404",
+      "date": "2026-05-06",
+      "status": "late",
+      "markedByUserId": "faculty-1"
+    },
+    {
+      "id": "att-5",
+      "studentUserId": "student-2",
+      "courseCode": "BCA404",
+      "date": "2026-05-06",
+      "status": "present",
+      "markedByUserId": "faculty-1"
+    },
+    {
+      "id": "att-6",
+      "studentUserId": "student-3",
+      "courseCode": "BCA404",
+      "date": "2026-05-06",
+      "status": "present",
+      "markedByUserId": "faculty-1"
+    },
+    {
+      "id": "8d70abe4-2487-41e0-82f0-506abfbfefa5",
+      "studentUserId": "student-1",
+      "courseCode": "BCA402",
+      "date": "2026-05-07",
+      "status": "present",
+      "markedByUserId": "faculty-1"
+    },
+    {
+      "id": "fbc74343-e6c3-4e36-8907-021072eeed8b",
+      "studentUserId": "student-2",
+      "courseCode": "BCA402",
+      "date": "2026-05-07",
+      "status": "present",
+      "markedByUserId": "faculty-1"
+    },
+    {
+      "id": "a560df4d-8023-40ce-a8b6-bcbac92d9112",
+      "studentUserId": "student-3",
+      "courseCode": "BCA402",
+      "date": "2026-05-07",
+      "status": "leave",
+      "markedByUserId": "faculty-1"
+    },
+    {
+      "id": "45ec16ce-ae09-4697-bab4-a8fe1a79ed53",
+      "studentUserId": "fk6TJB4a3YMOtZW2eLVTuQZk1J03",
+      "courseCode": "BCA301",
+      "date": "2026-05-10",
+      "status": "present",
+      "markedByUserId": "tUmLJDBkW9VmSqeUcgRajDK2XHe2"
+    },
+    {
+      "id": "44de5cfb-2027-45df-9f52-de3eb62d397b",
+      "studentUserId": "zAAMKuTAbIP3zBKrSCC4u1FZrBz2",
+      "courseCode": "BCA301",
+      "date": "2026-05-10",
+      "status": "present",
+      "markedByUserId": "tUmLJDBkW9VmSqeUcgRajDK2XHe2"
+    }
+  ],
+  "notificationLogs": [
+    {
+      "id": "af3a9b02-4e6f-45d7-be8e-f27f5e7d01a0",
+      "createdAt": "2026-05-07T16:52:00.069Z",
+      "studentUserId": "student-3",
+      "parentUserId": "parent-3",
+      "courseCode": "BCA402",
+      "type": "low_attendance",
+      "channel": "system",
+      "status": "sent",
+      "message": "Rahul M's attendance is 50%, below the 75% requirement."
+    },
+    {
+      "id": "471dec48-52c4-4e2f-92a5-4a35f6e8720e",
+      "createdAt": "2026-05-07T16:51:59.044Z",
+      "studentUserId": "student-3",
+      "parentUserId": "parent-3",
+      "courseCode": "BCA402",
+      "type": "low_attendance",
+      "channel": "system",
+      "status": "sent",
+      "message": "Rahul M's attendance is 50%, below the 75% requirement."
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+node_modules/
+functions/.env
+functions/.env.*
+.env
+.env.*
+*.zip
+*.docx
+dist/
+.firebase/
+.local-config/
+*.log

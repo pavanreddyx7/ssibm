@@ -1,0 +1,77 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "courses": "Courses",
+    "faculty": "Faculty",
+    "events": "Events",
+    "contact": "Contact",
+    "admissions": "Admissions",
+    "login": "Login",
+    "applyNow": "Apply Now"
+  },
+  "hero": {
+    "headline": "Learning Today, Leading Tomorrow",
+    "subheadline": "A modern SSIBM experience for ambitious students, supportive families, and a connected academic community.",
+    "ctaPrimary": "Explore Courses",
+    "ctaSecondary": "Talk to AI Counselor"
+  },
+  "about": {
+    "title": "Founded with purpose",
+    "paragraph": "Sri Siddhartha Education Society was founded in 1959 by Late Dr H M Gangadhariah with a mission to expand quality education for rural students, women, and underserved communities, inspired by the blessings of Acharya Vinobha Bhave.",
+    "readMore": "Read Our Story"
+  },
+  "courses": {
+    "title": "Explore our core programs",
+    "learnMore": "Learn More",
+    "courseList": {
+      "bba": { "name": "BBA", "duration": "3 years" },
+      "bcom": { "name": "B.Com", "duration": "3 years" },
+      "bca": { "name": "BCA", "duration": "3 years" },
+      "mcom": { "name": "M.Com", "duration": "2 years" },
+      "msw": { "name": "MSW", "duration": "2 years" }
+    }
+  },
+  "whyChoose": {
+    "title": "Why students choose SSIBM",
+    "reasons": [
+      "Strong academic direction with business, commerce, computing, and social science pathways.",
+      "Student-first learning environment with qualified faculty and practical exposure.",
+      "A legacy institution under SSES with a mission rooted in access and upliftment.",
+      "A campus experience being redesigned for easier admissions and communication.",
+      "A clear roadmap toward placements, parent updates, and digital support systems."
+    ]
+  },
+  "footer": {
+    "address": "SSIT Campus, Maralur, Tumakuru, Karnataka 572105",
+    "phone": "+91 9742689866, +91 9008323967, Office: 0816-2201008",
+    "email": "principal.ssibm2006@gmail.com",
+    "copyright": "© Copyright SSIBM. All Rights Reserved."
+  },
+  "chatbot": {
+    "welcomeMessage": "Hello, I am SSIBM AI. I can help with admissions, courses, and campus information.",
+    "subheading": "Admissions assistant",
+    "placeholder": "Ask about admissions, fees, or courses...",
+    "sendButton": "Send",
+    "typing": "Typing a reply...",
+    "leadPrompt": "Would you like our counselor to call you back? Share your name and phone number.",
+    "namePlaceholder": "Your name",
+    "phonePlaceholder": "Phone number",
+    "shareLead": "Request callback",
+    "leadError": "Please enter both your name and phone number.",
+    "leadSuccess": "Thanks, {{name}}. Our admissions team can use this for follow-up.",
+    "quickReplies": [
+      "What courses do you offer?",
+      "What are the fees for BCA?",
+      "How do I apply?",
+      "Where is the campus located?"
+    ]
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong.",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "success": "Success"
+  }
+}
