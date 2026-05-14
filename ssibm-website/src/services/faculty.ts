@@ -268,6 +268,7 @@ export async function fetchStudentMarkEntries(courseCode: string): Promise<Stude
       internal3: (r.internal3 ?? null) as number | null,
       assignment: (r.assignment ?? null) as number | null,
       lab: (r.lab ?? null) as number | null,
+      semester: (r.semesterExam ?? null) as number | null,
       maxInternal: (r.maxInternal ?? 25) as number,
       maxAssignment: (r.maxAssignment ?? 25) as number,
       maxLab: (r.maxLab ?? 25) as number,
@@ -280,6 +281,8 @@ export async function saveMarkEntries(
   courseCode: string,
   facultyUid: string,
   entries: StudentMarkEntry[],
+  subject?: string,
+  academicSemester?: number,
 ): Promise<void> {
   const batch = writeBatch(db)
   for (const entry of entries) {
@@ -289,7 +292,8 @@ export async function saveMarkEntries(
     const internalTotal = internal1 + internal2 + internal3
     const assignment = entry.assignment ?? 0
     const lab = entry.lab ?? 0
-    const total = internalTotal + assignment + lab
+    const semesterExam = entry.semester ?? 0
+    const total = internalTotal + assignment + lab + semesterExam
     const maxTotal = entry.maxInternal + entry.maxAssignment + entry.maxLab
     const ref = doc(db, 'marks', `${courseCode}_${entry.uid}`)
     batch.set(ref, {
@@ -297,6 +301,9 @@ export async function saveMarkEntries(
       studentName: entry.name,
       rollNumber: entry.rollNumber,
       courseCode,
+      subject: subject ?? courseCode,
+      // Academic semester (e.g. 3) stored as string for student MarksRecord.semester
+      semester: academicSemester != null ? String(academicSemester) : undefined,
       name: entry.name,
       internal1,
       internal2,
@@ -304,10 +311,10 @@ export async function saveMarkEntries(
       internal: internalTotal,
       assignment,
       lab,
+      semesterExam,
       maxInternal: entry.maxInternal,
       maxAssignment: entry.maxAssignment,
       maxLab: entry.maxLab,
-      // Keep student-visible fields for compatibility
       external: 0,
       maxExternal: 75,
       total,

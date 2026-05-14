@@ -369,10 +369,12 @@ export async function saveNotice(
   id: string | null,
   data: Omit<BroadcastNotice, 'id'>,
 ): Promise<void> {
+  // Save createdAt alias of issuedAt so student.ts fetchNotices can sort by it
+  const docData = { ...data, createdAt: data.issuedAt } as Record<string, unknown>
   if (id) {
-    await updateDoc(doc(db, 'notices', id), data as Record<string, unknown>)
+    await updateDoc(doc(db, 'notices', id), docData)
   } else {
-    await addDoc(collection(db, 'notices'), data)
+    await addDoc(collection(db, 'notices'), docData)
   }
 }
 

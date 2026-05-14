@@ -69,6 +69,7 @@ export type StudentMarkEntry = {
   internal3: number | null
   assignment: number | null
   lab: number | null
+  semester: number | null
   maxInternal: number
   maxAssignment: number
   maxLab: number

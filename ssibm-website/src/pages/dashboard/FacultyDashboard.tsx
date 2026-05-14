@@ -62,6 +62,7 @@ type FacultyDashboardResponse = {
       name: string
       section: string
       time: string
+      semester?: number
       roster: Array<{
         studentUserId: string
         name: string
@@ -216,6 +217,7 @@ async function buildFallbackFacultyDashboard(userId: string): Promise<FacultyDas
         name: course.name,
         section: course.sectionLabel,
         time: course.time,
+        semester: course.semester,
         roster: students.map((student) => ({
           studentUserId: student.uid,
           name: student.name,
@@ -633,6 +635,7 @@ export function FacultyDashboard() {
     setMarksLoading(true)
     setMarksMessage('')
     try {
+      const saveCourse = dashboard?.assignedCourses.find((c) => c.code === selectedCourseCode)
       await saveMarkEntries(
         selectedCourseCode,
         user.id,
@@ -645,10 +648,13 @@ export function FacultyDashboard() {
           internal3: e.internal3,
           assignment: e.assignment,
           lab: e.lab,
+          semester: e.semester,
           maxInternal: 25,
           maxAssignment: 25,
           maxLab: 25,
         })),
+        saveCourse?.name,
+        saveCourse?.semester,
       )
       setMarksMessage('Marks saved successfully.')
     } catch {
