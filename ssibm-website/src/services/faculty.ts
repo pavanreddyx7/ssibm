@@ -50,9 +50,29 @@ export async function updateFacultyProfile(
 // ─── Subject allocations ──────────────────────────────────────────────────────
 
 export async function fetchSubjectAllocations(uid: string): Promise<SubjectAllocation[]> {
-  const q = query(collection(db, 'subjectAllocations'), where('facultyUid', '==', uid))
-  const snap = await getDocs(q)
-  return snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<SubjectAllocation, 'id'>) }))
+  // Admin saves with 'facultyId'; legacy data may use 'facultyUid' — query both
+  const [byId, byUid] = await Promise.all([
+    getDocs(query(collection(db, 'subjectAllocations'), where('facultyId', '==', uid))),
+    getDocs(query(collection(db, 'subjectAllocations'), where('facultyUid', '==', uid))),
+  ])
+  const seen = new Set<string>()
+  const docs = [...byId.docs, ...byUid.docs].filter((d) => {
+    if (seen.has(d.id)) return false
+    seen.add(d.id)
+    return true
+  })
+  return docs.map((d) => {
+    const r = d.data()
+    return {
+      id: d.id,
+      courseCode: (r.subjectCode ?? r.courseCode ?? '') as string,
+      courseName: (r.subject ?? r.courseName ?? '') as string,
+      course: (r.department ?? r.course ?? '') as string,
+      semester: String(r.semester ?? ''),
+      section: (r.section ?? '') as string,
+      totalStudents: Number(r.totalStudents ?? 0),
+    }
+  })
 }
 
 // ─── Timetable ────────────────────────────────────────────────────────────────

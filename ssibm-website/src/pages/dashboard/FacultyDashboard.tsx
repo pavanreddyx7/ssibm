@@ -472,13 +472,18 @@ export function FacultyDashboard() {
       }
 
       if (dashboardResult.status === 'fulfilled') {
-        setDashboard(dashboardResult.value.data.data)
-        return
+        const backendData = dashboardResult.value.data.data
+        if (backendData.assignedCourses.length > 0) {
+          setDashboard(backendData)
+          return
+        }
       }
 
       const fallbackDashboard = await buildFallbackFacultyDashboard(user.id)
       setDashboard(fallbackDashboard)
-      setError('Backend server is not running, so the faculty dashboard is using Firebase fallback data.')
+      if (dashboardResult.status === 'rejected') {
+        setError('Backend server is not running, so the faculty dashboard is using Firebase fallback data.')
+      }
     } catch {
       setError('Unable to load faculty data. Make sure Firebase is configured and the faculty account has been seeded.')
     } finally {
