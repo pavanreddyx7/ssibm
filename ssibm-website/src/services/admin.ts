@@ -263,7 +263,7 @@ export async function fetchAllFees(): Promise<AdminFeeRecord[]> {
     const r = d.data()
     return {
       id: d.id,
-      studentId: d.id,
+      studentId: (r.studentId ?? d.id) as string,
       studentName: (r.studentName ?? undefined) as string | undefined,
       rollNumber: (r.rollNumber ?? undefined) as string | undefined,
       semester: Number(r.semester ?? 1),
@@ -276,8 +276,24 @@ export async function fetchAllFees(): Promise<AdminFeeRecord[]> {
   })
 }
 
+export async function addFeeRecord(data: Omit<AdminFeeRecord, 'id'>): Promise<void> {
+  await addDoc(collection(db, 'fees'), {
+    studentId: data.studentId,
+    studentName: data.studentName,
+    rollNumber: data.rollNumber,
+    semester: data.semester,
+    totalFee: data.totalAmount,
+    totalAmount: data.totalAmount,
+    paidAmount: data.paidAmount,
+    dueDate: data.dueDate,
+    status: data.status,
+  })
+}
+
 export async function updateFeeRecord(id: string, data: Partial<AdminFeeRecord>): Promise<void> {
-  await updateDoc(doc(db, 'fees', id), data as Record<string, unknown>)
+  const update: Record<string, unknown> = { ...data }
+  if (data.totalAmount !== undefined) update.totalFee = data.totalAmount
+  await updateDoc(doc(db, 'fees', id), update)
 }
 
 // ── Applications ──────────────────────────────────────────────────────────────

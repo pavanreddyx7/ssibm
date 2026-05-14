@@ -221,7 +221,7 @@ export function StudentDashboard() {
               <NoticesTab />
             )}
             {activeTab === 'complaints' && user && (
-              <ComplaintsTab uid={user.id} />
+              <ComplaintsTab uid={user.id} studentName={user.name ?? profile?.name ?? ''} />
             )}
             {activeTab === 'profile' && user && profile && (
               <ProfileTab
@@ -1109,7 +1109,7 @@ function NoticesTab() {
 
 // ─── Complaints / Support ─────────────────────────────────────────────────────
 
-function ComplaintsTab({ uid }: { uid: string }) {
+function ComplaintsTab({ uid, studentName }: { uid: string; studentName: string }) {
   const [complaints, setComplaints] = useState<Complaint[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
@@ -1136,7 +1136,7 @@ function ComplaintsTab({ uid }: { uid: string }) {
     if (!subject.trim() || !description.trim()) return
     setIsSubmitting(true)
     try {
-      await submitComplaint(uid, { subject, category, description })
+      await submitComplaint(uid, { subject, category, description, studentName })
       setSuccess(true)
       setSubject('')
       setDescription('')

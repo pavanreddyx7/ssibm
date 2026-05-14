@@ -143,12 +143,16 @@ export async function fetchComplaints(uid: string): Promise<Complaint[]> {
 
 export async function submitComplaint(
   uid: string,
-  data: { subject: string; category: string; description: string },
+  data: { subject: string; category: string; description: string; studentName?: string },
 ): Promise<void> {
   await addDoc(collection(db, 'complaints'), {
     studentUid: uid,
-    ...data,
+    studentName: data.studentName ?? 'Student',
+    subject: data.subject,
+    category: data.category,
+    description: data.description,
     status: 'open',
+    priority: 'medium',
     createdAt: new Date().toISOString(),
   })
 }

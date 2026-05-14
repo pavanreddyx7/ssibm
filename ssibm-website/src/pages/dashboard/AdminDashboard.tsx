@@ -22,6 +22,7 @@ import {
 import { useContext, useEffect, useState, type ReactNode } from 'react'
 import { AuthContext } from '../../context/AuthContext.tsx'
 import {
+  addFeeRecord,
   createFacultyWithCredentials,
   createStudentWithCredentials,
   deleteAllocation,
@@ -1345,6 +1346,158 @@ function MarksTab({
 
 // ── Fees Tab ──────────────────────────────────────────────────────────────────
 
+function blankFee(students: AdminStudent[]): Omit<AdminFeeRecord, 'id'> {
+  const first = students[0]
+  return {
+    studentId: first?.id ?? '',
+    studentName: first?.name ?? '',
+    rollNumber: first?.rollNumber ?? '',
+    semester: 1,
+    totalAmount: 0,
+    paidAmount: 0,
+    dueDate: '',
+    status: 'pending',
+  }
+}
+
+function FeeModal({
+  initial,
+  students,
+  onClose,
+  onSave,
+}: {
+  initial: AdminFeeRecord | null
+  students: AdminStudent[]
+  onClose: () => void
+  onSave: (id: string | null, data: Omit<AdminFeeRecord, 'id'>) => Promise<void>
+}) {
+  const [form, setForm] = useState<Omit<AdminFeeRecord, 'id'>>(
+    initial
+      ? {
+          studentId: initial.studentId,
+          studentName: initial.studentName,
+          rollNumber: initial.rollNumber,
+          semester: initial.semester,
+          totalAmount: initial.totalAmount,
+          paidAmount: initial.paidAmount,
+          dueDate: initial.dueDate,
+          status: initial.status,
+          lastPaymentDate: initial.lastPaymentDate,
+        }
+      : blankFee(students),
+  )
+  const [saving, setSaving] = useState(false)
+  const [err, setErr] = useState('')
+
+  function setStudent(id: string) {
+    const s = students.find((s) => s.id === id)
+    setForm((f) => ({
+      ...f,
+      studentId: id,
+      studentName: s?.name ?? '',
+      rollNumber: s?.rollNumber ?? '',
+    }))
+  }
+
+  function set<K extends keyof Omit<AdminFeeRecord, 'id'>>(key: K, val: Omit<AdminFeeRecord, 'id'>[K]) {
+    setForm((f) => ({ ...f, [key]: val }))
+  }
+
+  async function handleSubmit(e: { preventDefault(): void }) {
+    e.preventDefault()
+    setSaving(true)
+    setErr('')
+    try {
+      await onSave(initial?.id ?? null, form)
+      onClose()
+    } catch (error) {
+      setErr(error instanceof Error ? error.message : 'Save failed.')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const due = form.totalAmount - form.paidAmount
+
+  return (
+    <Modal title={initial ? 'Edit Fee Record' : 'Add Fee Record'} onClose={onClose}>
+      <form onSubmit={handleSubmit} className="grid gap-3">
+        {!initial && (
+          <SelectInput
+            label="Student"
+            value={form.studentId}
+            onChange={setStudent}
+            options={[
+              { value: '', label: 'Select student…' },
+              ...students.map((s) => ({ value: s.id, label: `${s.name} (${s.rollNumber})` })),
+            ]}
+          />
+        )}
+        {initial && (
+          <div className="rounded-xl bg-slate-50 px-4 py-3 text-sm text-slate-700">
+            <strong>{initial.studentName}</strong> · {initial.rollNumber}
+          </div>
+        )}
+        <div className="grid grid-cols-2 gap-3">
+          <SelectInput
+            label="Semester"
+            value={String(form.semester)}
+            onChange={(v) => set('semester', Number(v))}
+            options={SEMESTERS.map((s) => ({ value: String(s), label: `Semester ${s}` }))}
+          />
+          <FieldInput
+            label="Due Date"
+            value={form.dueDate}
+            onChange={(v) => set('dueDate', v)}
+            type="date"
+          />
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <FieldInput
+            label="Total Amount (₹)"
+            value={form.totalAmount}
+            onChange={(v) => set('totalAmount', Number(v))}
+            type="number"
+            required
+          />
+          <FieldInput
+            label="Paid Amount (₹)"
+            value={form.paidAmount}
+            onChange={(v) => set('paidAmount', Number(v))}
+            type="number"
+            required
+          />
+        </div>
+        <SelectInput
+          label="Status"
+          value={form.status}
+          onChange={(v) => set('status', v as AdminFeeRecord['status'])}
+          options={[
+            { value: 'pending', label: 'Pending' },
+            { value: 'partial', label: 'Partial' },
+            { value: 'paid', label: 'Paid' },
+            { value: 'overdue', label: 'Overdue' },
+          ]}
+        />
+        <div className="rounded-xl bg-slate-50 px-4 py-3 text-sm">
+          Balance due: <strong className={due > 0 ? 'text-rose-600' : 'text-emerald-600'}>
+            ₹{due.toLocaleString('en-IN')}
+          </strong>
+        </div>
+        {err && <p className="text-xs text-rose-600">{err}</p>}
+        <div className="mt-2 flex justify-end gap-3">
+          <button type="button" onClick={onClose} className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600">
+            Cancel
+          </button>
+          <button type="submit" disabled={saving} className="rounded-full bg-primary px-5 py-2 text-sm font-bold text-white disabled:opacity-50">
+            {saving ? 'Saving…' : 'Save'}
+          </button>
+        </div>
+      </form>
+    </Modal>
+  )
+}
+
 function FeesTab({
   fees,
   students,
@@ -1357,6 +1510,7 @@ function FeesTab({
   onRefresh: () => void
 }) {
   const [search, setSearch] = useState('')
+  const [modal, setModal] = useState<AdminFeeRecord | null | 'new'>(null)
 
   const enriched = fees.map((f) => ({
     ...f,
@@ -1370,6 +1524,15 @@ function FeesTab({
       f.rollNumber.toLowerCase().includes(search.toLowerCase()),
   )
 
+  async function handleSave(id: string | null, data: Omit<AdminFeeRecord, 'id'>) {
+    if (id) {
+      await updateFeeRecord(id, data)
+    } else {
+      await addFeeRecord(data)
+    }
+    onRefresh()
+  }
+
   async function markAsPaid(f: AdminFeeRecord) {
     await updateFeeRecord(f.id, {
       paidAmount: f.totalAmount,
@@ -1379,12 +1542,27 @@ function FeesTab({
     onRefresh()
   }
 
+  async function markAsDue(f: AdminFeeRecord) {
+    await updateFeeRecord(f.id, { status: 'pending', paidAmount: 0 })
+    onRefresh()
+  }
+
   return (
     <div className="grid gap-4">
       <SectionHeader
         eyebrow="Manage"
         title="Fee Records"
-        action={<ActionBtn icon={<RefreshCw className="size-3.5" />} onClick={onRefresh} />}
+        action={
+          <div className="flex gap-2">
+            <ActionBtn
+              icon={<Plus className="size-3.5" />}
+              label="Add Fee"
+              onClick={() => setModal('new')}
+              variant="primary"
+            />
+            <ActionBtn icon={<RefreshCw className="size-3.5" />} onClick={onRefresh} />
+          </div>
+        }
       />
       <div className="relative">
         <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
@@ -1398,7 +1576,7 @@ function FeesTab({
       {loading ? (
         <LoadingRows />
       ) : filtered.length === 0 ? (
-        <EmptyState message="No fee records found." />
+        <EmptyState message="No fee records found. Use 'Add Fee' to create one." />
       ) : (
         <div className="overflow-x-auto rounded-[1.5rem] border border-slate-200 bg-white">
           <table className="min-w-full border-separate border-spacing-0">
@@ -1410,7 +1588,7 @@ function FeesTab({
                 <th className="px-4 py-3">Paid</th>
                 <th className="px-4 py-3">Due Date</th>
                 <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3">Action</th>
+                <th className="px-4 py-3">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -1428,20 +1606,39 @@ function FeesTab({
                     <Badge value={f.status} variant={statusVariant(f.status)} />
                   </td>
                   <td className="px-4 py-3">
-                    {f.status !== 'paid' && (
-                      <ActionBtn
-                        icon={<CheckCircle className="size-3" />}
-                        label="Mark Paid"
-                        onClick={() => void markAsPaid(f)}
-                        variant="primary"
-                      />
-                    )}
+                    <div className="flex flex-wrap gap-1.5">
+                      <ActionBtn icon={<Edit2 className="size-3" />} onClick={() => setModal(f)} />
+                      {f.status !== 'paid' && (
+                        <ActionBtn
+                          icon={<CheckCircle className="size-3" />}
+                          label="Paid"
+                          onClick={() => void markAsPaid(f)}
+                          variant="primary"
+                        />
+                      )}
+                      {f.status === 'paid' && (
+                        <ActionBtn
+                          icon={<AlertCircle className="size-3" />}
+                          label="Due"
+                          onClick={() => void markAsDue(f)}
+                          variant="danger"
+                        />
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
+      )}
+      {modal !== null && (
+        <FeeModal
+          initial={modal === 'new' ? null : modal}
+          students={students}
+          onClose={() => setModal(null)}
+          onSave={handleSave}
+        />
       )}
     </div>
   )
