@@ -3,7 +3,6 @@ import { GraduationCap, Menu, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, NavLink } from 'react-router-dom'
-import { getLoginPath } from '../../services/auth.ts'
 import { LanguageSwitcher } from './LanguageSwitcher.tsx'
 
 const navItems = [
@@ -16,11 +15,6 @@ const navItems = [
   { key: 'contact', to: '/contact' },
 ] as const
 
-const loginLinks = [
-  { label: 'Student', to: getLoginPath('student') },
-  { label: 'Faculty', to: getLoginPath('faculty') },
-  { label: 'Admin', to: getLoginPath('admin') },
-]
 
 export function Navbar() {
   const { t } = useTranslation()
@@ -73,25 +67,12 @@ export function Navbar() {
 
         <div className="hidden items-center gap-3 lg:flex">
           <LanguageSwitcher />
-          <div className="group relative">
-            <button
-              type="button"
-              className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm"
-            >
-              {t('nav.login')}
-            </button>
-            <div className="absolute right-0 top-12 hidden min-w-40 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl group-hover:block">
-              {loginLinks.map((link) => (
-                <Link
-                  key={link.to}
-                  className="block rounded-xl px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
-                  to={link.to}
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
-          </div>
+          <Link
+            to="/login"
+            className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm"
+          >
+            {t('nav.login')}
+          </Link>
           <Link
             to="/admissions"
             className="rounded-full bg-secondary px-5 py-2.5 text-sm font-bold text-slate-950 shadow-lg shadow-secondary/30 transition hover:-translate-y-0.5"
@@ -156,17 +137,14 @@ export function Navbar() {
                 ))}
               </nav>
 
-              <div className="mt-8 grid gap-3">
-                {loginLinks.map((link) => (
-                  <Link
-                    key={link.to}
-                    className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700"
-                    to={link.to}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    {link.label} Login
-                  </Link>
-                ))}
+              <div className="mt-8">
+                <Link
+                  to="/login"
+                  className="block rounded-2xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {t('nav.login')}
+                </Link>
               </div>
 
               <Link

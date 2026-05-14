@@ -19,6 +19,7 @@ export function ChatbotFab() {
   const [leadCaptured, setLeadCaptured] = useState(false)
   const [leadError, setLeadError] = useState('')
   const [chatError, setChatError] = useState('')
+  const [serverWarmed, setServerWarmed] = useState(false)
   const sessionIdRef = useRef(createSessionId())
   const scrollRef = useRef<HTMLDivElement | null>(null)
 
@@ -71,13 +72,14 @@ export function ChatbotFab() {
         leadName: leadCaptured ? leadName : undefined,
         leadPhone: leadCaptured ? leadPhone : undefined,
       })
+      setServerWarmed(true)
       setMessages((current) => [...current, { role: 'assistant', content: response.data.reply }])
       setUserExchangeCount((current) => current + 1)
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.data?.message) {
         setChatError(String(error.response.data.message))
       } else {
-        setChatError('Chat service is unavailable right now. Please try again after starting the server.')
+        setChatError('Unable to reach the chat service. Please try again.')
       }
     } finally {
       setIsTyping(false)
@@ -177,9 +179,16 @@ export function ChatbotFab() {
 
                 {isTyping ? (
                   <div className="flex justify-start">
-                    <div className="inline-flex items-center gap-2 rounded-3xl rounded-bl-md bg-white p-4 text-sm text-slate-600 shadow-sm">
-                      <LoaderCircle className="size-4 animate-spin text-primary" />
-                      {t('chatbot.typing')}
+                    <div className="inline-flex flex-col gap-1 rounded-3xl rounded-bl-md bg-white p-4 text-sm text-slate-600 shadow-sm">
+                      <span className="inline-flex items-center gap-2">
+                        <LoaderCircle className="size-4 animate-spin text-primary" />
+                        {t('chatbot.typing')}
+                      </span>
+                      {!serverWarmed && (
+                        <span className="text-xs text-slate-400">
+                          First response may take ~30s to wake up the server…
+                        </span>
+                      )}
                     </div>
                   </div>
                 ) : null}

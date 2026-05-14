@@ -1,13 +1,56 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
+import { deleteApp, initializeApp } from 'firebase/app'
+import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 import { addDoc, collection, doc, setDoc, writeBatch } from 'firebase/firestore'
 import { useContext, useState } from 'react'
 import { AuthContext } from '../context/AuthContext'
-import { auth, db } from '../firebase'
+import { db, firebaseConfig } from '../firebase'
 
 const TEST_ACCOUNTS = [
-  { role: 'student', email: 'student@ssibm.ac.in', password: 'Student@123', label: 'Student — Rahul Kumar' },
-  { role: 'admin',   email: 'admin@ssibm.ac.in',   password: 'Admin@123',   label: 'Admin — Principal' },
-  { role: 'faculty', email: 'faculty@ssibm.ac.in', password: 'Faculty@123', label: 'Faculty — Prof. Suresh M.' },
+  { role: 'admin',   email: 'admin@ssibm.demo',           password: 'Admin@123',   label: 'Admin' },
+  // Faculty — BBA
+  { role: 'faculty', email: 'harsharadhya@ssibm.demo',    password: 'Faculty@123', label: 'Mr. Harsharadhya H U — BBA' },
+  { role: 'faculty', email: 'lakshmidevi@ssibm.demo',     password: 'Faculty@123', label: 'Mrs. Lakshmidevi N — BBA' },
+  { role: 'faculty', email: 'jaisimha@ssibm.demo',        password: 'Faculty@123', label: 'Mr. Jaisimha Rao B S — BBA' },
+  // Faculty — B.Com
+  { role: 'faculty', email: 'muthuraj@ssibm.demo',        password: 'Faculty@123', label: 'Mr. Muthuraj T R — B.Com' },
+  { role: 'faculty', email: 'sagar@ssibm.demo',           password: 'Faculty@123', label: 'Mr. Sagar A S — B.Com' },
+  { role: 'faculty', email: 'pankaja@ssibm.demo',         password: 'Faculty@123', label: 'Mrs. Pankaja N — B.Com' },
+  // Faculty — BCA
+  { role: 'faculty', email: 'shalika@ssibm.demo',         password: 'Faculty@123', label: 'Mrs. Shalika H S — BCA (HoD)' },
+  { role: 'faculty', email: 'shivakumar@ssibm.demo',      password: 'Faculty@123', label: 'Mr. Shivakumar B — BCA' },
+  { role: 'faculty', email: 'dhanya@ssibm.demo',          password: 'Faculty@123', label: 'Mrs. Dhanya P M — BCA' },
+  // Faculty — M.Com & MSW
+  { role: 'faculty', email: 'chidananda@ssibm.demo',      password: 'Faculty@123', label: 'Mr. Chidananda V N — M.Com (HoD)' },
+  { role: 'faculty', email: 'guruprasad@ssibm.demo',      password: 'Faculty@123', label: 'Dr. C V Guruprasad — MSW (HoD)' },
+  { role: 'faculty', email: 'raghu@ssibm.demo',           password: 'Faculty@123', label: 'Mr. Raghu P K — MSW' },
+  // Students — BCA
+  { role: 'student', email: 'priya.bca@ssibm.demo',       password: 'Student@123', label: 'Priya Sharma — BCA Sem 1' },
+  { role: 'student', email: 'ravi.bca@ssibm.demo',        password: 'Student@123', label: 'Ravi Teja — BCA Sem 2' },
+  { role: 'student', email: 'kiran.bca@ssibm.demo',       password: 'Student@123', label: 'Kiran Kumar — BCA Sem 3' },
+  { role: 'student', email: 'aishwarya.bca@ssibm.demo',   password: 'Student@123', label: 'Aishwarya R — BCA Sem 4' },
+  { role: 'student', email: 'deepak.bca@ssibm.demo',      password: 'Student@123', label: 'Deepak M — BCA Sem 5' },
+  // Students — BBA
+  { role: 'student', email: 'sneha.bba@ssibm.demo',       password: 'Student@123', label: 'Sneha Patil — BBA Sem 1' },
+  { role: 'student', email: 'mahesh.bba@ssibm.demo',      password: 'Student@123', label: 'Mahesh B — BBA Sem 3' },
+  { role: 'student', email: 'kavya.bba@ssibm.demo',       password: 'Student@123', label: 'Kavya R — BBA Sem 3' },
+  { role: 'student', email: 'suresh.bba@ssibm.demo',      password: 'Student@123', label: 'Suresh N — BBA Sem 5' },
+  // Students — B.Com
+  { role: 'student', email: 'divya.bcom@ssibm.demo',      password: 'Student@123', label: 'Divya K — B.Com Sem 1' },
+  { role: 'student', email: 'prasad.bcom@ssibm.demo',     password: 'Student@123', label: 'Prasad T — B.Com Sem 3' },
+  { role: 'student', email: 'lakshmi.bcom@ssibm.demo',    password: 'Student@123', label: 'Lakshmi M — B.Com Sem 3' },
+  { role: 'student', email: 'vijay.bcom@ssibm.demo',      password: 'Student@123', label: 'Vijay S — B.Com Sem 5' },
+  // Students — M.Com
+  { role: 'student', email: 'nandini.mcom@ssibm.demo',    password: 'Student@123', label: 'Nandini K — M.Com Sem 1' },
+  { role: 'student', email: 'supriya.mcom@ssibm.demo',    password: 'Student@123', label: 'Supriya H — M.Com Sem 1' },
+  { role: 'student', email: 'rakesh.mcom@ssibm.demo',     password: 'Student@123', label: 'Rakesh D — M.Com Sem 2' },
+  { role: 'student', email: 'meena.mcom@ssibm.demo',      password: 'Student@123', label: 'Meena P — M.Com Sem 2' },
+  // Students — MSW
+  { role: 'student', email: 'arjun.msw@ssibm.demo',       password: 'Student@123', label: 'Arjun V — MSW Sem 1' },
+  { role: 'student', email: 'pooja.msw@ssibm.demo',       password: 'Student@123', label: 'Pooja L — MSW Sem 3' },
+  { role: 'student', email: 'rohith.msw@ssibm.demo',      password: 'Student@123', label: 'Rohith S — MSW Sem 3' },
+  // Parents
+  { role: 'parent',  email: 'parent.priya@ssibm.demo',    password: 'Parent@123',  label: 'Parent of Priya Sharma' },
+  { role: 'parent',  email: 'parent.aishwarya@ssibm.demo',password: 'Parent@123',  label: 'Parent of Aishwarya R' },
 ]
 
 // ─── Seed helpers ─────────────────────────────────────────────────────────────
@@ -230,21 +273,52 @@ type StepStatus = 'idle' | 'running' | 'done' | 'error'
 type Step = { label: string; status: StepStatus; count?: number }
 
 const ROLE_PROFILES: Record<string, object> = {
-  student: { role: 'student', name: 'Rahul Kumar',      email: 'student@ssibm.ac.in', phone: '9876543210', rollNumber: 'BCA23001', course: 'BCA', semester: '3', section: 'A', dob: '2004-08-15', address: '12, 3rd Cross, Tumakuru', parentPhone: '9845012345' },
-  admin:   { role: 'admin',   name: 'Dr. G Parameshwara', email: 'admin@ssibm.ac.in',   phone: '9742689866' },
-  faculty: {
-    role: 'faculty',
-    name: 'Prof. Suresh M.',
-    email: 'faculty@ssibm.ac.in',
-    phone: '9900112233',
-    employeeId: 'SSIBM-FAC-014',
-    department: 'Computer Applications',
-    designation: 'Assistant Professor',
-    qualification: 'MCA, M.Phil',
-    experience: '8 years',
-    specialization: 'Web Systems and Analytics',
-    joiningDate: '2019-06-03',
-  },
+  // Admin
+  'admin@ssibm.demo': { role: 'admin', name: 'SSIBM Admin', email: 'admin@ssibm.demo', phone: '9742689866' },
+  // Faculty — BBA
+  'harsharadhya@ssibm.demo':  { role: 'faculty', name: 'Mr. Harsharadhya H U',  email: 'harsharadhya@ssibm.demo',  department: 'BBA', designation: 'Assistant Professor', qualification: 'BBA, M.Com, PGDHRM' },
+  'lakshmidevi@ssibm.demo':   { role: 'faculty', name: 'Mrs. Lakshmidevi N',    email: 'lakshmidevi@ssibm.demo',   department: 'BBA', designation: 'Assistant Professor', qualification: 'BBA, M.Com, PGDHRM' },
+  'jaisimha@ssibm.demo':      { role: 'faculty', name: 'Mr. Jaisimha Rao B S',  email: 'jaisimha@ssibm.demo',      department: 'BBA', designation: 'Assistant Professor', qualification: 'BBA, M.Com, KSET' },
+  // Faculty — B.Com
+  'muthuraj@ssibm.demo':      { role: 'faculty', name: 'Mr. Muthuraj T R',      email: 'muthuraj@ssibm.demo',      department: 'B.Com', designation: 'Assistant Professor', qualification: 'B.Com, M.Com, NET, B.Ed' },
+  'sagar@ssibm.demo':         { role: 'faculty', name: 'Mr. Sagar A S',         email: 'sagar@ssibm.demo',         department: 'B.Com', designation: 'Assistant Professor', qualification: 'B.Com, M.Com, NET' },
+  'pankaja@ssibm.demo':       { role: 'faculty', name: 'Mrs. Pankaja N',        email: 'pankaja@ssibm.demo',       department: 'B.Com', designation: 'Assistant Professor', qualification: 'B.Com, M.Com' },
+  // Faculty — BCA
+  'shalika@ssibm.demo':       { role: 'faculty', name: 'Mrs. Shalika H S',      email: 'shalika@ssibm.demo',       department: 'BCA',   designation: 'Head of Department', qualification: 'MBA, Ph.D' },
+  'shivakumar@ssibm.demo':    { role: 'faculty', name: 'Mr. Shivakumar B',      email: 'shivakumar@ssibm.demo',    department: 'BCA',   designation: 'Assistant Professor', qualification: 'BCA, MCA' },
+  'dhanya@ssibm.demo':        { role: 'faculty', name: 'Mrs. Dhanya P M',       email: 'dhanya@ssibm.demo',        department: 'BCA',   designation: 'Assistant Professor', qualification: 'BCA, ME' },
+  // Faculty — M.Com & MSW
+  'chidananda@ssibm.demo':    { role: 'faculty', name: 'Mr. Chidananda V N',    email: 'chidananda@ssibm.demo',    department: 'M.Com', designation: 'Head of Department', qualification: 'MBA, M.Com, Ph.D' },
+  'guruprasad@ssibm.demo':    { role: 'faculty', name: 'Dr. C V Guruprasad',    email: 'guruprasad@ssibm.demo',    department: 'MSW',   designation: 'Head of Department', qualification: 'MBA, M.Com, Ph.D' },
+  'raghu@ssibm.demo':         { role: 'faculty', name: 'Mr. Raghu P K',         email: 'raghu@ssibm.demo',         department: 'MSW',   designation: 'Assistant Professor', qualification: 'MSW, PGDHRM, MA (Eng)' },
+  // Students — BCA
+  'priya.bca@ssibm.demo':     { role: 'student', name: 'Priya Sharma',    email: 'priya.bca@ssibm.demo',     rollNumber: 'BCA25-003', course: 'BCA', semester: '1', section: 'A' },
+  'ravi.bca@ssibm.demo':      { role: 'student', name: 'Ravi Teja',       email: 'ravi.bca@ssibm.demo',      rollNumber: 'BCA24-011', course: 'BCA', semester: '2', section: 'A' },
+  'kiran.bca@ssibm.demo':     { role: 'student', name: 'Kiran Kumar',     email: 'kiran.bca@ssibm.demo',     rollNumber: 'BCA23-025', course: 'BCA', semester: '3', section: 'A' },
+  'aishwarya.bca@ssibm.demo': { role: 'student', name: 'Aishwarya R',     email: 'aishwarya.bca@ssibm.demo', rollNumber: 'BCA22-018', course: 'BCA', semester: '4', section: 'A' },
+  'deepak.bca@ssibm.demo':    { role: 'student', name: 'Deepak M',        email: 'deepak.bca@ssibm.demo',    rollNumber: 'BCA21-007', course: 'BCA', semester: '5', section: 'A' },
+  // Students — BBA
+  'sneha.bba@ssibm.demo':     { role: 'student', name: 'Sneha Patil',     email: 'sneha.bba@ssibm.demo',     rollNumber: 'BBA25-005', course: 'BBA', semester: '1', section: 'A' },
+  'mahesh.bba@ssibm.demo':    { role: 'student', name: 'Mahesh B',        email: 'mahesh.bba@ssibm.demo',    rollNumber: 'BBA23-012', course: 'BBA', semester: '3', section: 'A' },
+  'kavya.bba@ssibm.demo':     { role: 'student', name: 'Kavya R',         email: 'kavya.bba@ssibm.demo',     rollNumber: 'BBA23-017', course: 'BBA', semester: '3', section: 'B' },
+  'suresh.bba@ssibm.demo':    { role: 'student', name: 'Suresh N',        email: 'suresh.bba@ssibm.demo',    rollNumber: 'BBA21-009', course: 'BBA', semester: '5', section: 'A' },
+  // Students — B.Com
+  'divya.bcom@ssibm.demo':    { role: 'student', name: 'Divya K',         email: 'divya.bcom@ssibm.demo',    rollNumber: 'BCOM25-006', course: 'B.Com', semester: '1', section: 'A' },
+  'prasad.bcom@ssibm.demo':   { role: 'student', name: 'Prasad T',        email: 'prasad.bcom@ssibm.demo',   rollNumber: 'BCOM23-014', course: 'B.Com', semester: '3', section: 'A' },
+  'lakshmi.bcom@ssibm.demo':  { role: 'student', name: 'Lakshmi M',       email: 'lakshmi.bcom@ssibm.demo',  rollNumber: 'BCOM23-019', course: 'B.Com', semester: '3', section: 'A' },
+  'vijay.bcom@ssibm.demo':    { role: 'student', name: 'Vijay S',         email: 'vijay.bcom@ssibm.demo',    rollNumber: 'BCOM21-008', course: 'B.Com', semester: '5', section: 'A' },
+  // Students — M.Com
+  'nandini.mcom@ssibm.demo':  { role: 'student', name: 'Nandini K',       email: 'nandini.mcom@ssibm.demo',  rollNumber: 'MCOM25-004', course: 'M.Com', semester: '1', section: 'PG' },
+  'supriya.mcom@ssibm.demo':  { role: 'student', name: 'Supriya H',       email: 'supriya.mcom@ssibm.demo',  rollNumber: 'MCOM25-007', course: 'M.Com', semester: '1', section: 'PG' },
+  'rakesh.mcom@ssibm.demo':   { role: 'student', name: 'Rakesh D',        email: 'rakesh.mcom@ssibm.demo',   rollNumber: 'MCOM24-003', course: 'M.Com', semester: '2', section: 'PG' },
+  'meena.mcom@ssibm.demo':    { role: 'student', name: 'Meena P',         email: 'meena.mcom@ssibm.demo',    rollNumber: 'MCOM24-009', course: 'M.Com', semester: '2', section: 'PG' },
+  // Students — MSW
+  'arjun.msw@ssibm.demo':     { role: 'student', name: 'Arjun V',         email: 'arjun.msw@ssibm.demo',     rollNumber: 'MSW25-002',  course: 'MSW', semester: '1', section: 'A' },
+  'pooja.msw@ssibm.demo':     { role: 'student', name: 'Pooja L',         email: 'pooja.msw@ssibm.demo',     rollNumber: 'MSW23-008',  course: 'MSW', semester: '3', section: 'A' },
+  'rohith.msw@ssibm.demo':    { role: 'student', name: 'Rohith S',        email: 'rohith.msw@ssibm.demo',    rollNumber: 'MSW23-013',  course: 'MSW', semester: '3', section: 'A' },
+  // Parents
+  'parent.priya@ssibm.demo':     { role: 'parent', name: 'Parent of Priya Sharma',  email: 'parent.priya@ssibm.demo' },
+  'parent.aishwarya@ssibm.demo': { role: 'parent', name: 'Parent of Aishwarya R',   email: 'parent.aishwarya@ssibm.demo' },
 }
 
 async function seedFacultyFinance(uid: string) {
@@ -290,6 +364,7 @@ export function DevSeed() {
   const [isRunning, setIsRunning] = useState(false)
   const [done, setDone] = useState(false)
   const [accountStatus, setAccountStatus] = useState<Record<string, 'idle' | 'done' | 'exists' | 'error'>>({})
+  const [accountErrors, setAccountErrors] = useState<Record<string, string>>({})
   const [isCreatingAccounts, setIsCreatingAccounts] = useState(false)
   const [accountsDone, setAccountsDone] = useState(false)
 
@@ -301,28 +376,37 @@ export function DevSeed() {
     setIsCreatingAccounts(true)
     setAccountsDone(false)
     const statusMap: Record<string, 'idle' | 'done' | 'exists' | 'error'> = {}
+    const errMap: Record<string, string> = {}
+
+    // Use a secondary Firebase app so account creation doesn't displace the current session
+    const secondaryApp = initializeApp(firebaseConfig, `seed-${Date.now()}`)
+    const secondaryAuth = getAuth(secondaryApp)
+
     for (const acct of TEST_ACCOUNTS) {
       try {
         let uid: string
         try {
-          const cred = await createUserWithEmailAndPassword(auth, acct.email, acct.password)
+          const cred = await createUserWithEmailAndPassword(secondaryAuth, acct.email, acct.password)
           uid = cred.user.uid
         } catch (err: unknown) {
           if ((err as { code?: string }).code !== 'auth/email-already-in-use') throw err
-          // Account exists — sign in to get the UID, then write the missing profile
-          const cred = await signInWithEmailAndPassword(auth, acct.email, acct.password)
+          // Account exists — sign in via secondary app to get the UID
+          const cred = await signInWithEmailAndPassword(secondaryAuth, acct.email, acct.password)
           uid = cred.user.uid
         }
-        await setDoc(doc(db, 'users', uid), ROLE_PROFILES[acct.role])
-        if (acct.role === 'faculty') {
-          await seedFacultyFinance(uid)
-        }
-        statusMap[acct.role] = 'done'
-      } catch {
-        statusMap[acct.role] = 'error'
+        const profile = ROLE_PROFILES[acct.email] ?? { role: acct.role, name: acct.label, email: acct.email }
+        await setDoc(doc(db, 'users', uid), profile)
+        if (acct.role === 'faculty') await seedFacultyFinance(uid)
+        statusMap[acct.email] = 'done'
+      } catch (err: unknown) {
+        statusMap[acct.email] = 'error'
+        errMap[acct.email] = (err as { code?: string }).code ?? (err as Error).message ?? 'unknown'
       }
       setAccountStatus({ ...statusMap })
+      setAccountErrors({ ...errMap })
     }
+
+    await deleteApp(secondaryApp)
     setIsCreatingAccounts(false)
     setAccountsDone(true)
   }
@@ -440,15 +524,20 @@ export function DevSeed() {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {TEST_ACCOUNTS.map((acct) => (
-                  <tr key={acct.role}>
-                    <td className="px-4 py-3 font-semibold capitalize text-slate-900">{acct.role}</td>
+                  <tr key={acct.email}>
+                    <td className="px-4 py-3 text-xs text-slate-600">{acct.label}</td>
                     <td className="px-4 py-3 font-mono text-xs text-slate-700">{acct.email}</td>
                     <td className="px-4 py-3 font-mono text-xs text-slate-700">{acct.password}</td>
                     <td className="px-4 py-3">
-                      {accountStatus[acct.role] ? (
-                        <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${acctBadge[accountStatus[acct.role]] ?? ''}`}>
-                          {accountStatus[acct.role] === 'exists' ? 'already exists' : accountStatus[acct.role]}
-                        </span>
+                      {accountStatus[acct.email] ? (
+                        <div>
+                          <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${acctBadge[accountStatus[acct.email]] ?? ''}`}>
+                            {accountStatus[acct.email]}
+                          </span>
+                          {accountErrors[acct.email] ? (
+                            <p className="mt-1 text-xs text-rose-600">{accountErrors[acct.email]}</p>
+                          ) : null}
+                        </div>
                       ) : (
                         <span className="text-xs text-slate-400">—</span>
                       )}
@@ -461,9 +550,7 @@ export function DevSeed() {
 
           {accountsDone && (
             <p className="mt-4 rounded-2xl bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700">
-              Accounts ready. Now{' '}
-              <a href="/login?role=student" className="underline">sign in as Student</a>
-              , then complete Step 2.
+              All accounts created. <a href="/login" className="underline">Go to Login →</a>
             </p>
           )}
 

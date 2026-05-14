@@ -30,7 +30,7 @@ import {
   fetchStudentMarkEntries,
   fetchSubjectAllocations,
   markAttendance as saveFacultyAttendance,
-  notifyAbsentParentsViaFirestore as notifyAbsentParents,
+  notifyAbsentParents,
   saveMarkEntries,
   submitLeaveRequest as submitFacultyLeave,
   uploadStudyMaterial,
@@ -310,40 +310,76 @@ export function FacultyDashboard() {
 
   useEffect(() => {
     if (!selectedCourseCode) return
+
     const course = dashboard?.assignedCourses.find((c) => c.code === selectedCourseCode)
-    if (course) {
-      setMarksEntries(
-        course.roster.map((student) => ({
-          studentUserId: student.studentUserId,
-          studentName: student.name,
-          rollNumber: student.rollNumber,
-          internal1: 0,
-          internal2: 0,
-          internal3: 0,
-          assignment: 0,
-          lab: 0,
-          semester: 0,
-        })),
-      )
+    const rosterFromDashboard: MarksEntry[] = (course?.roster ?? []).map((student) => ({
+      studentUserId: student.studentUserId,
+      studentName: student.name,
+      rollNumber: student.rollNumber,
+      internal1: 0,
+      internal2: 0,
+      internal3: 0,
+      assignment: 0,
+      lab: 0,
+      semester: 0,
+    }))
+
+    if (rosterFromDashboard.length > 0) {
+      setMarksEntries(rosterFromDashboard)
     }
+
     setMarksLoading(true)
-    fetchStudentMarkEntries(selectedCourseCode)
-      .then((entries) => {
-        if (entries.length > 0) {
-          setMarksEntries(
-            entries.map((e) => ({
-              studentUserId: e.uid,
-              studentName: e.name,
-              rollNumber: e.rollNumber,
-              internal1: e.internal1 ?? 0,
-              internal2: e.internal2 ?? 0,
-              internal3: e.internal3 ?? 0,
-              assignment: e.assignment ?? 0,
-              lab: e.lab ?? 0,
-              semester: 0,
-            })),
-          )
+
+    // Fetch both marks AND (if roster is empty) students in parallel
+    const coursePrefix = selectedCourseCode.slice(0, 3)
+    Promise.all([
+      fetchStudentMarkEntries(selectedCourseCode),
+      rosterFromDashboard.length === 0 ? fetchCourseStudents(coursePrefix, '') : Promise.resolve(null),
+    ])
+      .then(([markEntries, firestoreStudents]) => {
+        // Build base roster — prefer dashboard roster, fall back to Firestore query
+        const baseRoster: MarksEntry[] =
+          rosterFromDashboard.length > 0
+            ? rosterFromDashboard
+            : (firestoreStudents ?? []).map((s) => ({
+                studentUserId: s.uid,
+                studentName: s.name,
+                rollNumber: s.rollNumber,
+                internal1: 0,
+                internal2: 0,
+                internal3: 0,
+                assignment: 0,
+                lab: 0,
+                semester: 0,
+              }))
+
+        if (markEntries.length === 0 && baseRoster.length > 0) {
+          setMarksEntries(baseRoster)
+          return
         }
+
+        if (markEntries.length === 0) return
+
+        // Merge saved marks into base roster — names always come from roster
+        const merged = baseRoster.map((entry) => {
+          const saved = markEntries.find(
+            (e) =>
+              (e.rollNumber && e.rollNumber === entry.rollNumber) ||
+              e.uid === entry.studentUserId,
+          )
+          if (!saved) return entry
+          return {
+            ...entry,
+            internal1: saved.internal1 ?? 0,
+            internal2: saved.internal2 ?? 0,
+            internal3: saved.internal3 ?? 0,
+            assignment: saved.assignment ?? 0,
+            lab: saved.lab ?? 0,
+            semester: 0,
+          }
+        })
+
+        setMarksEntries(merged.length > 0 ? merged : baseRoster)
       })
       .catch(() => null)
       .finally(() => setMarksLoading(false))
@@ -1229,19 +1265,20 @@ function MarksTab({
                 <th className="px-3 py-3 font-semibold">Int 3</th>
                 <th className="px-3 py-3 font-semibold">Assignment</th>
                 <th className="px-3 py-3 font-semibold">Lab</th>
+                <th className="px-3 py-3 font-semibold">Semester</th>
                 <th className="px-3 py-3 font-semibold">Total</th>
               </tr>
             </thead>
             <tbody>
               {marksEntries.map((entry) => {
-                const total = entry.internal1 + entry.internal2 + entry.internal3 + entry.assignment + entry.lab
+                const total = entry.internal1 + entry.internal2 + entry.internal3 + entry.assignment + entry.lab + entry.semester
                 return (
                   <tr key={entry.studentUserId} className="border-b border-slate-100">
                     <td className="px-3 py-3">
                       <p className="font-semibold text-slate-900">{entry.studentName}</p>
                       <p className="text-xs text-slate-500">{entry.rollNumber}</p>
                     </td>
-                    {(['internal1', 'internal2', 'internal3', 'assignment', 'lab'] as const).map((field) => (
+                    {(['internal1', 'internal2', 'internal3', 'assignment', 'lab', 'semester'] as const).map((field) => (
                       <td key={field} className="px-3 py-3">
                         <input
                           type="number"

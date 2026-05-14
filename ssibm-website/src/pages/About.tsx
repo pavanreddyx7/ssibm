@@ -93,19 +93,16 @@ export function About() {
         </section>
 
         <section className="grid gap-6 lg:grid-cols-[0.92fr,1.08fr]">
-          <article className="rounded-[2rem] border border-dashed border-slate-300 bg-slate-50 p-8">
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-secondary">
-              Founder Image Space
-            </p>
-            <div className="mt-6 flex min-h-[320px] items-center justify-center rounded-[1.5rem] border border-dashed border-slate-300 bg-white text-center">
-              <div>
-                <p className="font-display text-2xl font-extrabold text-slate-900">
-                  Late Dr. H. M. Gangadharaiah
-                </p>
-                <p className="mt-2 text-sm text-slate-500">
-                  Founder image placeholder
-                </p>
-              </div>
+          <article className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
+            <img
+              src="/about/gangadharaiah.jpeg"
+              alt="Late Dr. H. M. Gangadharaiah — Founder, Sri Siddhartha Education Society"
+              className="w-full object-cover object-top"
+              style={{ height: 'auto', maxHeight: '520px', display: 'block' }}
+            />
+            <div className="p-5 text-center">
+              <p className="font-display text-lg font-extrabold text-slate-900">Late Dr. H. M. Gangadharaiah</p>
+              <p className="mt-1 text-sm text-slate-500">Founder, Sri Siddhartha Education Society</p>
             </div>
           </article>
 
@@ -193,25 +190,31 @@ export function About() {
         </section>
 
         <section className="grid gap-6 lg:grid-cols-2">
-          <article className="rounded-[2rem] border border-dashed border-slate-300 bg-slate-50 p-8">
+          <article className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
             <p className="text-sm font-semibold uppercase tracking-[0.24em] text-secondary">
-              Leadership Image Space
+              Leadership
             </p>
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
-              <div className="flex min-h-[240px] items-center justify-center rounded-[1.5rem] border border-dashed border-slate-300 bg-white text-center">
-                <div>
-                  <p className="font-display text-xl font-extrabold text-slate-900">
-                    Late Dr. G. Shivaprasad
-                  </p>
-                  <p className="mt-2 text-sm text-slate-500">Secretary image placeholder</p>
+            <div className="mt-5 grid gap-4 sm:grid-cols-2">
+              <div className="overflow-hidden rounded-[1.5rem] border border-slate-100">
+                <img
+                  src="/about/shivvaprasad.jpeg"
+                  alt="Late Dr. G. Shivaprasad"
+                  className="h-52 w-full object-cover object-top"
+                />
+                <div className="p-4 text-center">
+                  <p className="font-display text-base font-extrabold text-slate-900">Late Dr. G. Shivaprasad</p>
+                  <p className="mt-1 text-xs text-slate-500">Founder Chancellor, SSAHE</p>
                 </div>
               </div>
-              <div className="flex min-h-[240px] items-center justify-center rounded-[1.5rem] border border-dashed border-slate-300 bg-white text-center">
-                <div>
-                  <p className="font-display text-xl font-extrabold text-slate-900">
-                    Dr. G. Parameshwara
-                  </p>
-                  <p className="mt-2 text-sm text-slate-500">Secretary image placeholder</p>
+              <div className="overflow-hidden rounded-[1.5rem] border border-slate-100">
+                <img
+                  src="/about/parameshwara.jpeg"
+                  alt="Dr. G. Parameshwara"
+                  className="h-52 w-full object-cover object-top"
+                />
+                <div className="p-4 text-center">
+                  <p className="font-display text-base font-extrabold text-slate-900">Dr. G. Parameshwara</p>
+                  <p className="mt-1 text-xs text-slate-500">Chancellor, SSAHE</p>
                 </div>
               </div>
             </div>

@@ -1,5 +1,4 @@
 import { AdmissionsApplication } from '../components/admissions/AdmissionsApplication.tsx'
-import { AttendancePreview } from '../components/attendance/AttendancePreview.tsx'
 import { PageIntro } from './shared/PageIntro.tsx'
 
 const steps = [
@@ -97,7 +96,6 @@ export function Admissions() {
           </article>
         </section>
 
-        <AttendancePreview />
       </div>
     </div>
   )

@@ -52,17 +52,6 @@ export function Contact() {
               </div>
             </article>
 
-            <article className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
-              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-secondary">
-                Office Hours and Map
-              </p>
-              <div className="mt-5 grid gap-4">
-                <div className="rounded-[1.5rem] bg-slate-50 p-4 text-sm text-slate-700">
-                  Monday to Saturday: 9:00 AM to 5:30 PM
-                </div>
-                <div className="aspect-[4/3] rounded-[1.5rem] bg-[linear-gradient(135deg,#e0f2fe_0%,#f8fafc_50%,#dbeafe_100%)]" />
-              </div>
-            </article>
           </div>
         </section>
       </div>
