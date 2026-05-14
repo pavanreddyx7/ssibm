@@ -84,9 +84,9 @@ export function Admissions() {
             </p>
             <div className="mt-6 grid gap-4">
               {[
-                'Fee structures will be listed after verification.',
-                'Razorpay integration can be added in the online application stage.',
-                'The AI counselor and callback lead capture will connect here in the next system pass.',
+                'BBA: ₹55,000/year · B.Com: ₹52,000/year · BCA: ₹58,000/year',
+                'M.Com: ₹54,000/year · MSW: ₹56,000/year',
+                'For scholarships, fee waivers, or instalment plans contact the admissions office at +91 9742689866.',
               ].map((item) => (
                 <div key={item} className="rounded-[1.5rem] bg-slate-50 p-4 text-sm leading-7 text-slate-700">
                   {item}

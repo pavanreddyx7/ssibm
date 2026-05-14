@@ -5,6 +5,8 @@ const courseDetails = [
   {
     name: 'BBA',
     level: 'Undergraduate',
+    duration: '3 Years',
+    fee: '₹55,000 / year',
     overview: 'A management-focused program for students interested in business, leadership, and communication.',
     eligibility: 'PUC / 12th standard or equivalent.',
     careers: 'Marketing, HR, operations, entrepreneurship.',
@@ -12,6 +14,8 @@ const courseDetails = [
   {
     name: 'B.Com',
     level: 'Undergraduate',
+    duration: '3 Years',
+    fee: '₹52,000 / year',
     overview: 'Built for finance, commerce, accounting, and business fundamentals.',
     eligibility: 'PUC / 12th standard or equivalent.',
     careers: 'Accounting, banking, business support, tax services.',
@@ -19,6 +23,8 @@ const courseDetails = [
   {
     name: 'BCA',
     level: 'Undergraduate',
+    duration: '3 Years',
+    fee: '₹58,000 / year',
     overview: 'A technology-oriented degree for computing, software basics, and digital careers.',
     eligibility: 'PUC / 12th standard or equivalent.',
     careers: 'Software support, web development, IT services.',
@@ -26,6 +32,8 @@ const courseDetails = [
   {
     name: 'M.Com',
     level: 'Postgraduate',
+    duration: '2 Years',
+    fee: '₹54,000 / year',
     overview: 'Advanced commerce study with emphasis on academic depth and business analysis.',
     eligibility: 'Relevant undergraduate degree.',
     careers: 'Teaching, finance roles, higher studies, corporate support.',
@@ -33,6 +41,8 @@ const courseDetails = [
   {
     name: 'MSW',
     level: 'Postgraduate',
+    duration: '2 Years',
+    fee: '₹56,000 / year',
     overview: 'Focused on social work practice, community engagement, and people-centered development.',
     eligibility: 'Relevant undergraduate degree.',
     careers: 'NGOs, counseling support, development programs, field coordination.',
@@ -59,14 +69,14 @@ export function Courses() {
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <p className="text-sm font-semibold uppercase tracking-[0.24em] text-secondary">
-                    {course.level}
+                    {course.level} &middot; {course.duration}
                   </p>
                   <h2 className="mt-3 font-display text-3xl font-extrabold text-slate-950">
                     {course.name}
                   </h2>
                 </div>
-                <span className="rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
-                  Fee details pending
+                <span className="rounded-full bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 ring-1 ring-emerald-200">
+                  {course.fee}
                 </span>
               </div>
               <p className="mt-5 text-sm leading-7 text-slate-600">{course.overview}</p>

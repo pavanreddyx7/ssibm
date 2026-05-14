@@ -422,10 +422,13 @@ export function FacultyDashboard() {
     if (!marksEntries.length) {
       return { average: 0, topScore: 0, belowThreshold: 0 }
     }
-    const totals = marksEntries.map((entry) => entry.internal1 + entry.internal2 + entry.internal3 + entry.assignment + entry.lab + entry.semester)
+    const totals = marksEntries.map((entry) => {
+      const internalRaw = entry.internal1 + entry.internal2 + entry.internal3 + entry.assignment + entry.lab
+      return Math.round(internalRaw / 2) + Math.round(entry.semester / 2)
+    })
     const average = Math.round(totals.reduce((sum, value) => sum + value, 0) / totals.length)
     const topScore = Math.max(...totals)
-    const belowThreshold = totals.filter((value) => value < 120).length
+    const belowThreshold = totals.filter((value) => value < 50).length
     return { average, topScore, belowThreshold }
   }, [marksEntries])
 
@@ -649,9 +652,9 @@ export function FacultyDashboard() {
           assignment: e.assignment,
           lab: e.lab,
           semester: e.semester,
-          maxInternal: 25,
-          maxAssignment: 25,
-          maxLab: 25,
+          maxInternal: 30,
+          maxAssignment: 10,
+          maxLab: 10,
         })),
         saveCourse?.name,
         saveCourse?.semester,
@@ -1273,18 +1276,22 @@ function MarksTab({
             <thead>
               <tr className="border-b border-slate-200 text-slate-500">
                 <th className="px-3 py-3 font-semibold">Student</th>
-                <th className="px-3 py-3 font-semibold">Int 1</th>
-                <th className="px-3 py-3 font-semibold">Int 2</th>
-                <th className="px-3 py-3 font-semibold">Int 3</th>
-                <th className="px-3 py-3 font-semibold">Assignment</th>
-                <th className="px-3 py-3 font-semibold">Lab</th>
-                <th className="px-3 py-3 font-semibold">Semester</th>
-                <th className="px-3 py-3 font-semibold">Total</th>
+                <th className="px-3 py-3 font-semibold">Int 1 /30</th>
+                <th className="px-3 py-3 font-semibold">Int 2 /30</th>
+                <th className="px-3 py-3 font-semibold">Int 3 /20</th>
+                <th className="px-3 py-3 font-semibold">Assign /10</th>
+                <th className="px-3 py-3 font-semibold">Lab /10</th>
+                <th className="px-3 py-3 font-semibold">Sem /100</th>
+                <th className="px-3 py-3 font-semibold">Total /100</th>
               </tr>
             </thead>
             <tbody>
               {marksEntries.map((entry) => {
-                const total = entry.internal1 + entry.internal2 + entry.internal3 + entry.assignment + entry.lab + entry.semester
+                const internalRaw = entry.internal1 + entry.internal2 + entry.internal3 + entry.assignment + entry.lab
+                const total = Math.round(internalRaw / 2) + Math.round(entry.semester / 2)
+                const fieldMaxes: Record<'internal1' | 'internal2' | 'internal3' | 'assignment' | 'lab' | 'semester', number> = {
+                  internal1: 30, internal2: 30, internal3: 20, assignment: 10, lab: 10, semester: 100,
+                }
                 return (
                   <tr key={entry.studentUserId} className="border-b border-slate-100">
                     <td className="px-3 py-3">
@@ -1296,7 +1303,7 @@ function MarksTab({
                         <input
                           type="number"
                           min="0"
-                          max="100"
+                          max={fieldMaxes[field]}
                           value={entry[field]}
                           onChange={(event) => onMarksChange(entry.studentUserId, field, event.target.value)}
                           className="w-20 rounded-xl border border-slate-200 px-3 py-2 outline-none focus:border-primary"
@@ -1331,8 +1338,9 @@ function MarksTab({
         <SectionTitle eyebrow="Performance Analytics" title="Student performance analytics" />
         <div className="grid gap-3">
           {marksEntries.map((entry) => {
-            const total = entry.internal1 + entry.internal2 + entry.internal3 + entry.assignment + entry.lab
-            const percentage = Math.round((total / 75) * 100)
+            const internalRaw = entry.internal1 + entry.internal2 + entry.internal3 + entry.assignment + entry.lab
+            const total = Math.round(internalRaw / 2) + Math.round(entry.semester / 2)
+            const percentage = total
             return (
               <div key={`analytics-${entry.studentUserId}`} className="rounded-2xl bg-slate-50 p-4">
                 <div className="flex items-center justify-between gap-4">

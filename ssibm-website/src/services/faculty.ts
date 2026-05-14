@@ -269,9 +269,9 @@ export async function fetchStudentMarkEntries(courseCode: string): Promise<Stude
       assignment: (r.assignment ?? null) as number | null,
       lab: (r.lab ?? null) as number | null,
       semester: (r.semesterExam ?? null) as number | null,
-      maxInternal: (r.maxInternal ?? 25) as number,
-      maxAssignment: (r.maxAssignment ?? 25) as number,
-      maxLab: (r.maxLab ?? 25) as number,
+      maxInternal: 30,
+      maxAssignment: 10,
+      maxLab: 10,
     }
   })
 }
@@ -289,12 +289,15 @@ export async function saveMarkEntries(
     const internal1 = entry.internal1 ?? 0
     const internal2 = entry.internal2 ?? 0
     const internal3 = entry.internal3 ?? 0
-    const internalTotal = internal1 + internal2 + internal3
     const assignment = entry.assignment ?? 0
     const lab = entry.lab ?? 0
     const semesterExam = entry.semester ?? 0
-    const total = internalTotal + assignment + lab + semesterExam
-    const maxTotal = entry.maxInternal + entry.maxAssignment + entry.maxLab
+    // Internal raw: i1(30)+i2(30)+i3(20)+assign(10)+lab(10) = max 100 → divide by 2 = 50
+    const internalRaw = internal1 + internal2 + internal3 + assignment + lab
+    const internalScore = Math.round(internalRaw / 2) // out of 50
+    // Semester exam: max 100 → divide by 2 = 50
+    const semScore = Math.round(semesterExam / 2) // out of 50
+    const total = internalScore + semScore // out of 100
     const ref = doc(db, 'marks', `${courseCode}_${entry.uid}`)
     batch.set(ref, {
       studentUid: entry.uid,
@@ -302,24 +305,22 @@ export async function saveMarkEntries(
       rollNumber: entry.rollNumber,
       courseCode,
       subject: subject ?? courseCode,
-      // Academic semester (e.g. 3) stored as string for student MarksRecord.semester
       semester: academicSemester != null ? String(academicSemester) : undefined,
       name: entry.name,
       internal1,
       internal2,
       internal3,
-      internal: internalTotal,
       assignment,
       lab,
       semesterExam,
-      maxInternal: entry.maxInternal,
-      maxAssignment: entry.maxAssignment,
-      maxLab: entry.maxLab,
-      external: 0,
-      maxExternal: 75,
-      total,
-      maxTotal: maxTotal > 0 ? maxTotal : 75,
-      grade: computeGrade(total, maxTotal > 0 ? maxTotal : 75),
+      // Student display fields: save already-divided scores so /max makes sense
+      internal: internalScore,    // out of 50
+      maxInternal: 50,
+      external: semScore,         // out of 50
+      maxExternal: 50,
+      total,                      // out of 100
+      maxTotal: 100,
+      grade: computeGrade(total, 100),
       facultyUid,
       published: false,
       updatedAt: new Date().toISOString(),

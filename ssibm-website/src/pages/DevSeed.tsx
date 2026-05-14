@@ -107,21 +107,25 @@ function buildSeedData(uid: string) {
     { course: 'BCA', semester: '3', day: 'Saturday', time: '10:00 - 11:00', subject: 'DBMS', room: 'Room 201', faculty: 'Prof. Ramesh B.' },
   ]
 
-  // ── Marks (Sem 1, 2 & 3 internal) ────────────────────────────────────────
+  // ── Marks — new scheme: internal /50 (raw 100÷2) + external /50 (sem 100÷2) = total /100 ──
   const marksRecords = [
-    // Sem 1
-    { studentUid: uid, courseCode: 'BCA101', subject: 'Programming in C', semester: '1', internal: 22, maxInternal: 25, external: 68, maxExternal: 75, total: 90, maxTotal: 100, grade: 'A' },
-    { studentUid: uid, courseCode: 'BCA102', subject: 'Mathematics I', semester: '1', internal: 18, maxInternal: 25, external: 55, maxExternal: 75, total: 73, maxTotal: 100, grade: 'B' },
-    { studentUid: uid, courseCode: 'BCA103', subject: 'Digital Electronics', semester: '1', internal: 20, maxInternal: 25, external: 60, maxExternal: 75, total: 80, maxTotal: 100, grade: 'A' },
-    { studentUid: uid, courseCode: 'BCA104', subject: 'Communication Skills', semester: '1', internal: 23, maxInternal: 25, external: 65, maxExternal: 75, total: 88, maxTotal: 100, grade: 'A' },
-    // Sem 2
-    { studentUid: uid, courseCode: 'BCA201', subject: 'Data Structures', semester: '2', internal: 21, maxInternal: 25, external: 62, maxExternal: 75, total: 83, maxTotal: 100, grade: 'A' },
-    { studentUid: uid, courseCode: 'BCA202', subject: 'Mathematics II', semester: '2', internal: 17, maxInternal: 25, external: 50, maxExternal: 75, total: 67, maxTotal: 100, grade: 'B' },
-    { studentUid: uid, courseCode: 'BCA203', subject: 'Python Programming', semester: '2', internal: 24, maxInternal: 25, external: 70, maxExternal: 75, total: 94, maxTotal: 100, grade: 'O' },
-    { studentUid: uid, courseCode: 'BCA204', subject: 'Operating Systems', semester: '2', internal: 19, maxInternal: 25, external: 58, maxExternal: 75, total: 77, maxTotal: 100, grade: 'A' },
-    // Sem 3 — internal only (exam not yet held)
-    { studentUid: uid, courseCode: 'BCA301', subject: 'Data Structures', semester: '3', internal: 20, maxInternal: 25, external: 0, maxExternal: 75, total: 20, maxTotal: 25, grade: 'IA' },
-    { studentUid: uid, courseCode: 'BCA302', subject: 'OOP with Java', semester: '3', internal: 22, maxInternal: 25, external: 0, maxExternal: 75, total: 22, maxTotal: 25, grade: 'IA' },
+    // Sem 1 — completed
+    { studentUid: uid, courseCode: 'BCA101', subject: 'Programming in C',   semester: '1', internal: 42, maxInternal: 50, external: 45, maxExternal: 50, total: 87, maxTotal: 100, grade: 'A+' },
+    { studentUid: uid, courseCode: 'BCA102', subject: 'Mathematics I',       semester: '1', internal: 34, maxInternal: 50, external: 37, maxExternal: 50, total: 71, maxTotal: 100, grade: 'A'  },
+    { studentUid: uid, courseCode: 'BCA103', subject: 'Digital Electronics', semester: '1', internal: 38, maxInternal: 50, external: 37, maxExternal: 50, total: 75, maxTotal: 100, grade: 'A'  },
+    { studentUid: uid, courseCode: 'BCA104', subject: 'Communication Skills',semester: '1', internal: 43, maxInternal: 50, external: 41, maxExternal: 50, total: 84, maxTotal: 100, grade: 'A+' },
+    // Sem 2 — completed
+    { studentUid: uid, courseCode: 'BCA201', subject: 'Data Structures',     semester: '2', internal: 39, maxInternal: 50, external: 38, maxExternal: 50, total: 77, maxTotal: 100, grade: 'A'  },
+    { studentUid: uid, courseCode: 'BCA202', subject: 'Mathematics II',      semester: '2', internal: 31, maxInternal: 50, external: 34, maxExternal: 50, total: 65, maxTotal: 100, grade: 'B+' },
+    { studentUid: uid, courseCode: 'BCA203', subject: 'Python Programming',  semester: '2', internal: 45, maxInternal: 50, external: 45, maxExternal: 50, total: 90, maxTotal: 100, grade: 'O'  },
+    { studentUid: uid, courseCode: 'BCA204', subject: 'Operating Systems',   semester: '2', internal: 37, maxInternal: 50, external: 37, maxExternal: 50, total: 74, maxTotal: 100, grade: 'A'  },
+    // Sem 3 — internal done, semester exam pending
+    { studentUid: uid, courseCode: 'BCA301', subject: 'Data Structures',     semester: '3', internal: 37, maxInternal: 50, external: 0,  maxExternal: 50, total: 37, maxTotal: 100, grade: 'IA' },
+    { studentUid: uid, courseCode: 'BCA302', subject: 'OOP with Java',       semester: '3', internal: 41, maxInternal: 50, external: 0,  maxExternal: 50, total: 41, maxTotal: 100, grade: 'IA' },
+    // Sem 6 — current semester
+    { studentUid: uid, courseCode: 'BCA601', subject: 'AIML',                semester: '6', internal: 42, maxInternal: 50, external: 40, maxExternal: 50, total: 82, maxTotal: 100, grade: 'A+' },
+    { studentUid: uid, courseCode: 'BCA602', subject: 'Cloud Computing',     semester: '6', internal: 38, maxInternal: 50, external: 36, maxExternal: 50, total: 74, maxTotal: 100, grade: 'A'  },
+    { studentUid: uid, courseCode: 'BCA603', subject: 'Cyber Security',      semester: '6', internal: 44, maxInternal: 50, external: 43, maxExternal: 50, total: 87, maxTotal: 100, grade: 'A+' },
   ]
 
   // ── Fees ────────────────────────────────────────────────────────────────

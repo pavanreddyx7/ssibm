@@ -89,12 +89,6 @@ const facultyGroups = [
         image: '/faculty/Shivakumar B.jpg',
       },
       {
-        name: 'Ms. Varsha U',
-        designation: 'Assistant Professor - BCA',
-        qualifications: 'BCA, MCA',
-        image: '/faculty/VARSHA U.jpg',
-      },
-      {
         name: 'Ms. Nayana S Patel',
         designation: 'Assistant Professor - BCA',
         qualifications: 'BCA, MCA',
