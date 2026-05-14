@@ -1,9 +1,21 @@
 import { deleteApp, initializeApp } from 'firebase/app'
 import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from 'firebase/auth'
-import { addDoc, collection, doc, setDoc, writeBatch } from 'firebase/firestore'
+import { addDoc, collection, deleteDoc, doc, getDocs, setDoc, writeBatch } from 'firebase/firestore'
 import { useContext, useState } from 'react'
 import { AuthContext } from '../context/AuthContext'
 import { db, firebaseConfig } from '../firebase'
+
+const ALL_COLLECTIONS = [
+  'users', 'marks', 'attendance', 'timetable', 'fees',
+  'assignments', 'materials', 'complaints', 'subjectAllocations',
+  'leaveBalance', 'paySlips', 'notifications',
+]
+
+async function wipeCollection(name: string): Promise<number> {
+  const snap = await getDocs(collection(db, name))
+  await Promise.all(snap.docs.map((d) => deleteDoc(doc(db, name, d.id))))
+  return snap.size
+}
 
 const TEST_ACCOUNTS = [
   { role: 'admin', email: 'admin@ssibm.demo', password: 'Admin@123', label: 'Admin' },
@@ -278,6 +290,21 @@ export function DevSeed() {
   const [accountErrors, setAccountErrors] = useState<Record<string, string>>({})
   const [isCreatingAccounts, setIsCreatingAccounts] = useState(false)
   const [accountsDone, setAccountsDone] = useState(false)
+  const [isWiping, setIsWiping] = useState(false)
+  const [wipeMessage, setWipeMessage] = useState('')
+
+  async function wipeDatabase() {
+    setIsWiping(true)
+    setWipeMessage('')
+    try {
+      const counts = await Promise.all(ALL_COLLECTIONS.map(wipeCollection))
+      const total = counts.reduce((s, n) => s + n, 0)
+      setWipeMessage(`Deleted ${total} documents across ${ALL_COLLECTIONS.length} collections.`)
+    } catch (err: unknown) {
+      setWipeMessage(`Error: ${(err as Error).message ?? 'unknown'}`)
+    }
+    setIsWiping(false)
+  }
 
   function updateStep(index: number, patch: Partial<Step>) {
     setSteps((prev) => prev.map((s, i) => (i === index ? { ...s, ...patch } : s)))
@@ -527,6 +554,30 @@ export function DevSeed() {
               </button>
             </>
           )}
+        </div>
+
+        {/* ── Wipe Database ───────────────────────────────────────────────── */}
+        <div className="mt-5 rounded-[2rem] border border-rose-200 bg-rose-50 p-8">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-rose-600">Danger Zone</p>
+          <h2 className="mt-1 text-2xl font-extrabold text-slate-950">Wipe all Firestore data</h2>
+          <p className="mt-2 text-sm text-slate-600">
+            Deletes every document in all collections ({ALL_COLLECTIONS.join(', ')}). This cannot be undone.
+          </p>
+
+          {wipeMessage ? (
+            <p className={`mt-4 rounded-2xl px-4 py-3 text-sm font-semibold ${wipeMessage.startsWith('Error') ? 'bg-rose-100 text-rose-700' : 'bg-emerald-50 text-emerald-700'}`}>
+              {wipeMessage}
+            </p>
+          ) : null}
+
+          <button
+            type="button"
+            onClick={() => { if (window.confirm('Delete ALL Firestore data? This cannot be undone.')) void wipeDatabase() }}
+            disabled={isWiping}
+            className="mt-5 w-full rounded-full bg-rose-600 px-6 py-3.5 text-sm font-bold text-white disabled:opacity-50 hover:bg-rose-700"
+          >
+            {isWiping ? 'Wiping…' : 'Wipe All Data'}
+          </button>
         </div>
       </div>
     </section>
