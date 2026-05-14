@@ -88,15 +88,22 @@ export async function fetchFacultyTimetable(uid: string): Promise<FacultyTimetab
 export async function fetchCourseStudents(
   courseCode: string,
   section: string,
+  department?: string,
+  semester?: number,
 ): Promise<ClassStudent[]> {
-  // Single-field query avoids composite index requirement
   const q = query(collection(db, 'users'), where('role', '==', 'student'))
   const snap = await getDocs(q)
-  const course = courseCode.slice(0, 3)
+  // Use explicit department if provided, otherwise derive from first 3 chars of courseCode
+  const deptKey = (department || courseCode.slice(0, 3)).toLowerCase()
   return snap.docs
     .filter((d) => {
       const data = d.data()
-      return data.course === course && (section === '' || data.section === section)
+      // Admin saves 'department'; legacy data may use 'course'
+      const studentDept = ((data.department ?? data.course ?? '') as string).toLowerCase()
+      const deptMatch = studentDept === deptKey
+      const sectionMatch = section === '' || data.section === section
+      const semesterMatch = semester === undefined || Number(data.semester) === semester
+      return deptMatch && sectionMatch && semesterMatch
     })
     .map((d) => ({
       uid: d.id,

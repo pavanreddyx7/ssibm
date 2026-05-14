@@ -201,14 +201,16 @@ async function buildFallbackFacultyDashboard(userId: string): Promise<FacultyDas
           code: allocation.courseCode,
           name: allocation.courseName,
           section: allocation.section,
-          sectionLabel: `${allocation.course} - Semester ${allocation.semester} ${allocation.section}`,
+          department: allocation.course,
+          semester: Number(allocation.semester) || undefined,
+          sectionLabel: `${allocation.course} - Semester ${allocation.semester} ${allocation.section}`.trim(),
           time: fallbackCourseBlueprints[index]?.time ?? '10:00 AM',
         }))
-      : fallbackCourseBlueprints
+      : fallbackCourseBlueprints.map((b) => ({ ...b, department: undefined, semester: undefined }))
 
   const assignedCourses = await Promise.all(
     sourceCourses.map(async (course) => {
-      const students = await fetchCourseStudents(course.code, course.section).catch(() => [])
+      const students = await fetchCourseStudents(course.code, course.section, course.department, course.semester).catch(() => [])
       return {
         code: course.code,
         name: course.name,
