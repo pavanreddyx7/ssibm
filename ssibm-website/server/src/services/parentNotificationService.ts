@@ -78,23 +78,37 @@ async function sendAlertForStudent(
   }
 
   if (input.notifyType === 'sms' || input.notifyType === 'both') {
-    const sms = await client.messages.create({
-      body: message,
-      from: input.fromNumber,
-      to,
-    })
-    result.smsSent = true
-    result.smsSid = sms.sid
+    try {
+      const sms = await client.messages.create({
+        body: message,
+        from: input.fromNumber,
+        to,
+      })
+      result.smsSent = true
+      result.smsSid = sms.sid
+      console.log(`SMS sent to ${to} — SID: ${sms.sid}`)
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err)
+      console.error(`SMS failed to ${to}: ${msg}`)
+      result.reason = msg
+    }
   }
 
   if (input.notifyType === 'call' || input.notifyType === 'both') {
-    const call = await client.calls.create({
-      twiml: buildTwiml(message),
-      from: input.fromNumber,
-      to,
-    })
-    result.callMade = true
-    result.callSid = call.sid
+    try {
+      const call = await client.calls.create({
+        twiml: buildTwiml(message),
+        from: input.fromNumber,
+        to,
+      })
+      result.callMade = true
+      result.callSid = call.sid
+      console.log(`Call initiated to ${to} — SID: ${call.sid}`)
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err)
+      console.error(`Call failed to ${to}: ${msg}`)
+      result.reason = msg
+    }
   }
 
   result.sent = result.smsSent || result.callMade

@@ -566,22 +566,29 @@ export function FacultyDashboard() {
       const notifyType = notifySms && notifyCall ? 'both' : notifyCall ? 'call' : notifySms ? 'sms' : null
 
       let notified = 0
+      let notifyError = ''
       if (notifyType) {
-        notified = await notifyAbsentParents(
-          user?.id ?? '',
-          selectedCourse.code,
-          selectedCourse.name,
-          selectedDate,
-          absentUids,
-          notifyType,
-        )
+        try {
+          notified = await notifyAbsentParents(
+            user?.id ?? '',
+            selectedCourse.code,
+            selectedCourse.name,
+            selectedDate,
+            absentUids,
+            notifyType,
+          )
+        } catch (err: unknown) {
+          notifyError = err instanceof Error ? err.message : 'Notification failed.'
+        }
       }
 
       const notifyLabel = notifyType === 'both' ? 'SMS + call' : notifyType === 'call' ? 'call' : 'SMS'
       setAttendanceMessage(
-        notified > 0
-          ? `Attendance saved. Parent ${notifyLabel} sent for ${notified} absent student${notified !== 1 ? 's' : ''}.`
-          : 'Attendance saved.',
+        notifyError
+          ? `Attendance saved. Notification error: ${notifyError}`
+          : notified > 0
+            ? `Attendance saved. Parent ${notifyLabel} sent for ${notified} absent student${notified !== 1 ? 's' : ''}.`
+            : 'Attendance saved.',
       )
 
       await loadDashboard()
