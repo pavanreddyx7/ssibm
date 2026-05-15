@@ -163,7 +163,7 @@ export async function notifyAbsentParentsViaFirestore(
     const userSnap = await getDoc(doc(db, 'users', uid))
     if (!userSnap.exists()) continue
     const data = userSnap.data()
-    const parentPhone = data.parentPhone as string | undefined
+    const parentPhone = (data.parentPhone ?? data.guardianPhone) as string | undefined
     if (!parentPhone) continue
     const studentName = data.name as string
     const rollNumber = (data.rollNumber ?? '') as string
@@ -202,7 +202,7 @@ export async function notifyAbsentParents(
     if (!userSnap.exists()) continue
 
     const data = userSnap.data()
-    const parentPhone = data.parentPhone as string | undefined
+    const parentPhone = (data.parentPhone ?? data.guardianPhone) as string | undefined
     if (!parentPhone) continue
 
     recipients.push({
