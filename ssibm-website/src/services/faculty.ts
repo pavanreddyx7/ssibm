@@ -194,7 +194,7 @@ export async function notifyAbsentParents(
   absentUids: string[],
   notifyType: 'sms' | 'call' | 'both' = 'sms',
 ): Promise<number> {
-  if (absentUids.length === 0) return 0
+  if (absentUids.length === 0) throw new Error(`NO_ABSENT: no absent students selected`)
   const recipients = []
 
   for (const uid of absentUids) {
@@ -213,7 +213,8 @@ export async function notifyAbsentParents(
     })
   }
 
-  if (recipients.length === 0) return 0
+  if (recipients.length === 0)
+    throw new Error(`NO_PHONE: ${absentUids.length} absent student(s) found but none have a guardian phone number saved`)
 
   const response = await api.post('/notifications/parent-alerts', {
     facultyUid,
